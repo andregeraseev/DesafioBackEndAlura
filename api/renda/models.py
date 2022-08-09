@@ -1,6 +1,6 @@
 from django.db import models
 
-class Receita(models.Model):
+class Receitas(models.Model):
 
     descricao = models.CharField(max_length=100, unique_for_month="data")
     valor = models.DecimalField(max_digits=8, decimal_places=2)

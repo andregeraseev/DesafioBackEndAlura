@@ -2,14 +2,14 @@ from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import BasicAuthentication
 from rest_framework import viewsets, filters, generics
-from .models import Receita, Despesas
+from .models import Receitas, Despesas
 from .serializers import ReceitaSerializer, DespesasSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 import django_filters.rest_framework
 
 
 class ReceitaViewSet(viewsets.ModelViewSet):
-    queryset = Receita.objects.all()
+    queryset = Receitas.objects.all()
     serializer_class = ReceitaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     search_fields = ['descricao']
@@ -29,7 +29,7 @@ class ListaReceitasMes(generics.ListAPIView):
 
     def get_queryset(self):
 
-        queryset = Receita.objects.filter(data__year=self.kwargs['ano'], data__month=self.kwargs['mes'])
+        queryset = Receitas.objects.filter(data__year=self.kwargs['ano'], data__month=self.kwargs['mes'])
         return queryset
 
     serializer_class = ReceitaSerializer
@@ -54,6 +54,15 @@ class BuscaDespesasList(generics.ListAPIView):
     filter_backends[1].search_param = 'descricao'
     search_fields = ['descricao']
 
+class ListaDespesasMes(generics.ListAPIView):
+    """Exibindo todas as receitas de um determinado mês"""
+
+    def get_queryset(self):
+
+        queryset = Despesas.objects.filter(data__year=self.kwargs['ano'], data__month=self.kwargs['mes'])
+        return queryset
+
+    serializer_class = ReceitaSerializer
 
 
 

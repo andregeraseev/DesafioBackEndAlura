@@ -1,10 +1,10 @@
 from rest_framework import routers, serializers, viewsets
-from .models import Receita,Despesas
+from .models import Receitas,Despesas
 
 
 class ReceitaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Receita
+        model = Receitas
         fields = ['descricao', 'valor' ,'categoria', 'data']
 
 class DespesasSerializer(serializers.ModelSerializer):

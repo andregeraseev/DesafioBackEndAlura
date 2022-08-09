@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path,include
 from rest_framework import routers
-from renda.views import ReceitaViewSet, DespesasViewSet, BuscaDespesasList,BuscaReceitasList,ListaReceitasMes
+from renda.views import ReceitaViewSet, DespesasViewSet, BuscaDespesasList,BuscaReceitasList,ListaReceitasMes, ListaDespesasMes
 
 router = routers.DefaultRouter()
 router.register(r'receitas', ReceitaViewSet)
@@ -15,5 +15,6 @@ urlpatterns = [
     path('despesas?descricao=<slug:pk>', BuscaDespesasList.as_view()),
     path('receitas?descricao=<slug:pk>', BuscaReceitasList.as_view()),
     path('receitas/<int:ano>/<int:mes>/', ListaReceitasMes.as_view()),
+    path('despesas/<int:ano>/<int:mes>/', ListaDespesasMes.as_view()),
 
 ]

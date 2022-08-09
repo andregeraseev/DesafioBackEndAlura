@@ -1,13 +1,13 @@
 from django.contrib import admin
-from .models import Receita, Despesas
+from .models import Receitas, Despesas
 
-class Receitas(admin.ModelAdmin):
+class Receita(admin.ModelAdmin):
     list_display = ('id', 'descricao', 'valor', 'categoria', 'data',)
     list_display_links = ('id', 'descricao',)
     search_fields = ('descricao',)
 
 
-admin.site.register(Receita, Receitas)
+admin.site.register(Receitas, Receita)
 
 class Despesa(admin.ModelAdmin):
     list_display = ('id', 'descricao', 'valor', 'categoria', 'data',)
