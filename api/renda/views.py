@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import BasicAuthentication
-from rest_framework import viewsets, filters, generics
+from rest_framework import viewsets, filters, generics, exceptions
 from .models import Receitas, Despesas
 from .serializers import ReceitaSerializer, DespesasSerializer
 from django_filters.rest_framework import DjangoFilterBackend
@@ -14,10 +14,10 @@ from django.db.models import Sum
 class ReceitaViewSet(viewsets.ModelViewSet):
     queryset = Receitas.objects.all()
     serializer_class = ReceitaSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ['descricao']
+    filter_backends = [filters.SearchFilter]
     authentication_classes = [BasicAuthentication]
     permission_classes = [IsAuthenticated]
+    search_fields = ['descricao']
 
 class BuscaReceitasList(generics.ListAPIView):
     """Busca receita pela descricao"""
@@ -25,7 +25,6 @@ class BuscaReceitasList(generics.ListAPIView):
     serializer_class = ReceitaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filter_backends[1].search_param = 'descricao'
-    search_fields = ['descricao']
 
 class ListaReceitasMes(generics.ListAPIView):
     """Exibindo todas as receitas de um determinado mês"""
@@ -41,12 +40,9 @@ class ListaReceitasMes(generics.ListAPIView):
 class DespesasViewSet(viewsets.ModelViewSet):
     queryset = Despesas.objects.all()
     serializer_class = DespesasSerializer
-    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ['descricao']
+    filter_backends = [filters.SearchFilter]
     authentication_classes = [BasicAuthentication]
     permission_classes = [IsAuthenticated]
-    filter_backends[1].search_param = 'descricao'
     search_fields = ['descricao']
 
 class BuscaDespesasList(generics.ListAPIView):
@@ -55,7 +51,7 @@ class BuscaDespesasList(generics.ListAPIView):
     serializer_class = DespesasSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filter_backends[1].search_param = 'descricao'
-    search_fields = ['descricao']
+
 
 class ListaDespesasMes(generics.ListAPIView):
     """Exibindo todas as receitas de um determinado mês"""
@@ -75,10 +71,15 @@ class ResumoView(APIView):
         despesa_por_categoria = Despesas.objects.filter(data__year=ano,
                                                        data__month=mes).values('categoria').annotate(Sum('valor'))
 
+
+
         for despesa in despesa_por_categoria:
-            print(despesa)
-            despesa['R$'] = despesa['valor__sum']
+            # print(despesa)
+            despesa['valor'] = despesa['valor__sum']
             del despesa['valor__sum']
+
+        if len(despesa_por_categoria) == 0:
+            despesa_por_categoria = None
 
 
         total_receitas = Receitas.objects.filter(data__year=ano, data__month=mes).aggregate(Sum('valor'))['valor__sum']
