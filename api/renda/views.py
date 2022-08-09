@@ -84,7 +84,7 @@ class ResumoView(APIView):
 
         total_receitas = Receitas.objects.filter(data__year=ano, data__month=mes).aggregate(Sum('valor'))['valor__sum']
         if total_receitas == None:
-            saldo_final = total_despesas
+            saldo_final =  total_despesas * -1
 
         elif total_despesas == None:
             saldo_final = total_receitas
