@@ -72,6 +72,15 @@ class ResumoView(APIView):
     def get(self, request, ano, mes):
         total_despesas =  Despesas.objects.filter(data__year=ano, data__month=mes).aggregate(Sum('valor'))['valor__sum']
 
+        despesa_por_categoria = Despesas.objects.filter(data__year=ano,
+                                                       data__month=mes).values('categoria').annotate(Sum('valor'))
+
+        for despesa in despesa_por_categoria:
+            print(despesa)
+            despesa['R$'] = despesa['valor__sum']
+            del despesa['valor__sum']
+
+
         total_receitas = Receitas.objects.filter(data__year=ano, data__month=mes).aggregate(Sum('valor'))['valor__sum']
         if total_receitas == None:
             saldo_final = total_despesas
@@ -87,6 +96,7 @@ class ResumoView(APIView):
             'total_despesas': total_despesas,
             'total_receitas': total_receitas,
             'saldo_final': saldo_final,
+            'despesa_por_categoria': despesa_por_categoria
 
         })
 
