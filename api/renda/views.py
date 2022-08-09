@@ -6,6 +6,9 @@ from .models import Receitas, Despesas
 from .serializers import ReceitaSerializer, DespesasSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 import django_filters.rest_framework
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.db.models import Sum
 
 
 class ReceitaViewSet(viewsets.ModelViewSet):
@@ -63,6 +66,29 @@ class ListaDespesasMes(generics.ListAPIView):
         return queryset
 
     serializer_class = ReceitaSerializer
+
+class ResumoView(APIView):
+
+    def get(self, request, ano, mes):
+        total_despesas =  Despesas.objects.filter(data__year=ano, data__month=mes).aggregate(Sum('valor'))['valor__sum']
+
+        total_receitas = Receitas.objects.filter(data__year=ano, data__month=mes).aggregate(Sum('valor'))['valor__sum']
+        if total_receitas == None:
+            saldo_final = total_despesas
+
+        elif total_despesas == None:
+            saldo_final = total_receitas
+
+        else:
+            saldo_final = total_receitas - total_despesas
+
+
+        return Response({
+            'total_despesas': total_despesas,
+            'total_receitas': total_receitas,
+            'saldo_final': saldo_final,
+
+        })
 
 
 
