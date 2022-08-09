@@ -7,8 +7,10 @@ router = routers.DefaultRouter()
 router.register(r'receita', ReceitaViewSet)
 router.register(r'despesas', DespesasViewSet)
 
+
 urlpatterns = [
     path('', include((router.urls))),
     path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls'))
+    path('api-auth/', include('rest_framework.urls')),
+    # path(r'despesas/', FiltroDespesaAPIView.as_view(), name='despesas-filtro')
 ]
