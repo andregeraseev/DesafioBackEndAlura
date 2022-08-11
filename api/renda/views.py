@@ -94,7 +94,7 @@ class ResumoView(APIView):
             total_despesas = (total_despesas *-1)
 
         if total_receitas == None:
-            saldo_final =  total_despesas
+            saldo_final = total_despesas
 
         elif total_despesas == None:
             saldo_final = total_receitas
