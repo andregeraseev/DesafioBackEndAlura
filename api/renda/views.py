@@ -66,6 +66,7 @@ class ListaDespesasMes(generics.ListAPIView):
     serializer_class = DespesasSerializer
 
 class ResumoView(APIView):
+    """Exibindo resumo de despesas e receitas por categoria em determinado mes com saldo final"""
 
     def get(self, request, ano, mes):
         total_despesas =  Despesas.objects.filter(data__year=ano, data__month=mes).aggregate(Sum('valor'))['valor__sum']
@@ -85,14 +86,22 @@ class ResumoView(APIView):
 
 
         total_receitas = Receitas.objects.filter(data__year=ano, data__month=mes).aggregate(Sum('valor'))['valor__sum']
+
+        # if total_receitas and total_despesas == None:
+        #     saldo_final =  total_receitas
+
+        if total_despesas != None:
+            total_despesas = (total_despesas *-1)
+
         if total_receitas == None:
-            saldo_final =  total_despesas * -1
+            saldo_final =  total_despesas
 
         elif total_despesas == None:
             saldo_final = total_receitas
 
         else:
-            saldo_final = total_receitas - total_despesas
+            saldo_final = total_receitas + total_despesas
+
 
 
         return Response({
