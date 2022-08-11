@@ -12,11 +12,12 @@ from django.db.models import Sum
 
 
 class ReceitaViewSet(viewsets.ModelViewSet):
+    """Exibindo todas as receitas"""
     queryset = Receitas.objects.all()
     serializer_class = ReceitaSerializer
     filter_backends = [filters.SearchFilter]
-    authentication_classes = [BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [BasicAuthentication]
+    # permission_classes = [IsAuthenticated]
     search_fields = ['descricao']
 
 class BuscaReceitasList(generics.ListAPIView):
@@ -38,11 +39,12 @@ class ListaReceitasMes(generics.ListAPIView):
 
 
 class DespesasViewSet(viewsets.ModelViewSet):
+    """Exibindo todas as despesas"""
     queryset = Despesas.objects.all()
     serializer_class = DespesasSerializer
     filter_backends = [filters.SearchFilter]
-    authentication_classes = [BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [BasicAuthentication]
+    # permission_classes = [IsAuthenticated]
     search_fields = ['descricao']
 
 class BuscaDespesasList(generics.ListAPIView):
@@ -54,14 +56,14 @@ class BuscaDespesasList(generics.ListAPIView):
 
 
 class ListaDespesasMes(generics.ListAPIView):
-    """Exibindo todas as receitas de um determinado mês"""
+    """Exibindo todas as despesas de um determinado mês"""
 
     def get_queryset(self):
 
         queryset = Despesas.objects.filter(data__year=self.kwargs['ano'], data__month=self.kwargs['mes'])
         return queryset
 
-    serializer_class = ReceitaSerializer
+    serializer_class = DespesasSerializer
 
 class ResumoView(APIView):
 
