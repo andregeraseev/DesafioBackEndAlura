@@ -1,14 +1,25 @@
 from django.test import TestCase
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 from renda.models import Despesas
 from django.urls import reverse
 from rest_framework import status
+from django.contrib.auth.models import User
 # Create your tests here.
+
+
+
 
 class DespesasTestCase(APITestCase):
 
+    def autentica(self):
+        """funçao para autenticar"""
+        self.user = User.objects.create_user('c3po', password='123456')
+        return self.client.force_authenticate(user=self.user)
+
     def setUp(self):
+
         self.list_url = reverse('Despesas-list')
+
         self.despesa_1= Despesas.objects.create(
             descricao='teste', valor='10.5', categoria= 'I', data= '2022-01-01'
         )
@@ -23,11 +34,13 @@ class DespesasTestCase(APITestCase):
 
     def test_requisicao_get_para_listar_uma_despesa(self):
         """Teste para verificar requisisao GET para uma despesa"""
+        self.autentica()
         response = self.client.get('/despesas/1/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_requisicao_get_para_listar_despesas(self):
         """Teste para verificar requisisao GET para listar as despesas"""
+        self.autentica()
         response = self.client.get(self.list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -40,6 +53,7 @@ class DespesasTestCase(APITestCase):
             'data':'2022-01-08'
 
         }
+        self.autentica()
         response = self.client.post(self.list_url, data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -52,6 +66,7 @@ class DespesasTestCase(APITestCase):
             'data':'2022-02-01'
 
         }
+        self.autentica()
         response = self.client.put('/despesas/1/', data=data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -66,6 +81,7 @@ class DespesasTestCase(APITestCase):
             'data': '2022-01-01'
 
         }
+        self.autentica()
         response = self.client.post(self.list_url, data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -78,23 +94,25 @@ class DespesasTestCase(APITestCase):
             'categoria': 'A',
 
         }
+        self.autentica()
         response = self.client.post(self.list_url, data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_requisicao_delete_para_deletar_despesa(self):
         """Teste para verificar a requisição  deletar despesa"""
+        self.autentica()
         response = self.client.delete('/despesas/1/')
         self.assertEquals(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_requisicao_get_para_buscar_despesa_por_descricao(self):
         """Teste para verificar a requisição GET que busca as despesas por descrição"""
-
+        self.autentica()
         response = self.client.get('/despesas/?descricao=test/')
         self.assertEquals(response.status_code, status.HTTP_200_OK)
 
     def test_requisicao_get_para_filtrar_despesa_por_data(self):
         """Teste para verificar a requisição GET que filtra as despesas por data ano, mes"""
-
+        self.autentica()
         response = self.client.get('/despesas/2022/01/')
         self.assertEquals(response.status_code, status.HTTP_200_OK)
 
