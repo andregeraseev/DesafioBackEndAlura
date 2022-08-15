@@ -34,6 +34,7 @@ class DespesasTestCase(APITestCase):
 
     def test_requisicao_get_para_listar_uma_despesa(self):
         """Teste para verificar requisisao GET para uma despesa"""
+
         self.autentica()
         response = self.client.get('/despesas/1/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
